@@ -17,15 +17,15 @@ class FrameworkViewController: UIViewController {
     // 결과 => <Section, AppleFramework>. 하지만 뭔가 이것을 처음보는 사람은 AppleFramework라는것이 무엇인지 모를수가 있다. typealias를 이용해 가독성을 높여보자!
     // typealias Item = AppleFramework
     // 결과 => <Section, Item> -> 아주 깔끔하다.
+```
+
+```swift
     @IBOutlet weak var collectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Data -> snapshot(진짜로 데이터만 관리)
         // Presentation -> diffable datasource (데이터를 셀로 어떻게 보여줄지만 관리)
-        // Layout -> compositional Layout (셀들을 어떻게 보여줄지 관리)
-        
         dataSource = UICollectionViewDiffableDataSource<Section,Item>(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrameworkCollectionViewCell", for: indexPath) as? FrameworkCollectionViewCell else {
                 return nil
@@ -34,13 +34,20 @@ class FrameworkViewController: UIViewController {
             return cell
         })
         
-        var snapshot = NSDiffableDataSourceSnapshot<Section,Item>()
-        snapshot.appendSections([.main])
+        // Data -> snapshot(진짜로 데이터만 관리)
+        var snapshot = NSDiffableDataSourceSnapshot<Section,Item>() // 스냅샷 깡통을 만들어준다.
+        // 강사님이 compositionalLayout은 [section [item]] 형식이라고 하셨다.
+        // 정확히는 무엇인지 잘 모르지만 일단 그렇게 알고있자.
+        snapshot.appendSections([.main]) 
         snapshot.appendItems(frameworkList, toSection: .main)
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot) // dataSource에 적용시켜주면 자연스럽게 바뀐다.
+        
+        // Layout -> compositional Layout (셀들을 어떻게 보여줄지 관리)
         collectionView.collectionViewLayout = layout()
     }
+
     private func layout() -> UICollectionViewCompositionalLayout {
+        // fractionalWidth, fractionalHeight = 현재 자신이 속한 컨테이너의 크기를 기반으로 비율로써 자신의 크기를 정한다.
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.33), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
@@ -54,7 +61,14 @@ class FrameworkViewController: UIViewController {
     }
 ```
 
-- 아직 snapshot과 layout부분은 확실하게 알지 못함. 여러가지 사용후 다시 README.md 업데이트 하기.
 
+## 🍎 조금 더 공부해야 하는 부분
+```swift
+public init(collectionView: UICollectionView, cellProvider: @escaping UICollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>.CellProvider)
+```
 
+.CellProvider은
 
+```swift
+public typealias CellProvider = (_ collectionView: UICollectionView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UICollectionViewCell?
+```

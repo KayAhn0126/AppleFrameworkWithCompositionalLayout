@@ -17,9 +17,7 @@ class FrameworkViewController: UIViewController {
     // 결과 => <Section, AppleFramework>. 하지만 뭔가 이것을 처음보는 사람은 AppleFramework라는것이 무엇인지 모를수가 있다. typealias를 이용해 가독성을 높여보자!
     // typealias Item = AppleFramework
     // 결과 => <Section, Item> -> 아주 깔끔하다.
-```
-
-```swift
+    
     @IBOutlet weak var collectionView: UICollectionView!
     
     override func viewDidLoad() {

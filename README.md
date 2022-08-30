@@ -1,22 +1,32 @@
 # 6. AppleFrameworkWithCompositionalLayout
+- DiffableDataSource
+- Snapshot
+- Compositional Layout
 
-## 🍎 UICollectionViewDiffableDataSource & UICollectionViewCompositionalLayout
+## 🍎 작동 화면
+- [기존 dataSource와 delegateflowlayout을 사용한 앱](https://github.com/KayAhn0126/AppleFramework)과 동일.
+
+## 🍎 UICollectionViewDiffableDataSource & UICollectionViewCompositionalLayout 코드 분석
 ```swift
+
+enum Section {
+    case main
+}
+
 class FrameworkViewController: UIViewController {
-    var frameworkList: [AppleFramework] = AppleFramework.list
     
-    typealias Item = AppleFramework
     // var dataSource: UICollectionViewDiffableDataSource<<#SectionIdentifierType: Hashable#>, <#ItemIdentifierType: Hashable#>> -> 원형
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     // diffable datasource를 사용할 때 section의 타입과 item의 타입을 정의를 해야한다.
-    // section 같은경우에는..
-    enum Section {
-        case main
-    }
-    // item 같은경우에는 AppleFramework타입을 쓰려고 했지만 AppleFramework타입은 hashable하지 않다. -> Hashable 프로토콜 채택
+    
+    typealias Item = AppleFramework
+    // item 같은경우에는 AppleFramework타입을 쓰려고 했지만 AppleFramework타입은 hashable하지 않다. -> AppleFramework를 Hashable 프로토콜 채택하면서 해결.
     // 결과 => <Section, AppleFramework>. 하지만 뭔가 이것을 처음보는 사람은 AppleFramework라는것이 무엇인지 모를수가 있다. typealias를 이용해 가독성을 높여보자!
     // typealias Item = AppleFramework
     // 결과 => <Section, Item> -> 아주 깔끔하다.
+    
+    
+    var frameworkList: [AppleFramework] = AppleFramework.list
     
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -34,8 +44,7 @@ class FrameworkViewController: UIViewController {
         
         // Data -> snapshot(진짜로 데이터만 관리)
         var snapshot = NSDiffableDataSourceSnapshot<Section,Item>() // 스냅샷 깡통을 만들어준다.
-        // 강사님이 compositionalLayout은 [section [item]] 형식이라고 하셨다.
-        // 정확히는 무엇인지 잘 모르지만 일단 그렇게 알고있자.
+        // compositionalLayout은 [section [item]] 형식.
         snapshot.appendSections([.main]) 
         snapshot.appendItems(frameworkList, toSection: .main)
         dataSource.apply(snapshot) // dataSource에 적용시켜주면 자연스럽게 바뀐다.
